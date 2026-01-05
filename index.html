@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rachador de Multi-Notas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>💸 Rachador de Multi-Notas Fiscais</h1>
+
+        <div id="step1">
+            <h2>1. Participantes</h2>
+            <div class="input-group">
+                <label for="pessoas">Número de Participantes:</label>
+                <input type="number" id="pessoas" min="1" value="2" required>
+            </div>
+            <button onclick="gerarCamposParticipantes()">Gerar Campos de Nomes</button>
+
+            <div id="camposNomes" class="hidden">
+                <hr>
+                <button onclick="confirmarNomes()">Confirmar Nomes e Avançar</button>
+            </div>
+        </div>
+
+        <div id="step2" class="hidden">
+            <hr>
+            <h2>2. Adicionar Notas Fiscais</h2>
+
+            <div class="input-group">
+                <label for="valorNotaAtual">Valor da Nota Fiscal (R$):</label>
+                <input type="number" id="valorNotaAtual" step="0.01" min="0" placeholder="Ex: 80.00" required>
+            </div>
+
+            <div class="input-group">
+                <label for="pagadorAtual">Quem pagou esta Nota?</label>
+                <select id="pagadorAtual" required>
+                    <option value="">-- Selecione o Pagador --</option>
+                </select>
+            </div>
+
+            <button onclick="adicionarNota()">Adicionar Nota à Lista</button>
+
+            <div id="listaNotas" class="notas-resumo">
+                <h3>Notas Adicionadas:</h3>
+                <ul id="listaNotasUl">
+                </ul>
+                <p><strong>Total Gasto Acumulado:</strong> <span id="totalAcumulado">R$ 0.00</span></p>
+            </div>
+
+            <button onclick="calcularTransferenciasFinais()">Calcular Divisão e Transferências</button>
+        </div>
+
+        <section id="resultados" class="hidden">
+            <hr>
+            <h2>✨ Resultados Finais</h2>
+            <p><strong>Total Geral Gasto:</strong> <span id="totalGasto"></span></p>
+            <p><strong>Valor por Pessoa (Devido):</strong> <span id="valorPorPessoa"></span></p>
+
+            <div id="resumoTransferencias">
+                <hr>
+                <h3>🔄 Resumo de Transferências</h3>
+                <ul id="listaTransferencias">
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

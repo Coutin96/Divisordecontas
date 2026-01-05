@@ -1,0 +1,159 @@
+/* Variáveis de cores */
+:root {
+    --primary-color: #4CAF50;
+    /* Verde */
+    --secondary-color: #388E3C;
+    /* Verde escuro */
+    --text-color: #333;
+    --background-color: #f4f4f4;
+    --card-background: #ffffff;
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    /* Limita a largura em telas de computador */
+    background-color: var(--card-background);
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+h3 {
+    color: var(--secondary-color);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin: 20px 0;
+}
+
+/* Estilo para Grupos de Entrada */
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group input[type="number"],
+.input-group input[type="text"],
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Estilo para o Botão */
+button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Novo estilo para a seção de resumo de notas */
+.notas-resumo {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px dashed #4CAF50;
+    /* Borda tracejada verde */
+    border-radius: 5px;
+    background-color: #f0fff0;
+}
+
+#listaNotasUl {
+    list-style: none;
+    padding: 0;
+}
+
+#listaNotasUl li {
+    margin-bottom: 5px;
+    padding: 8px;
+    border-bottom: 1px dotted #ccc;
+    font-size: 0.9em;
+}
+
+#listaNotasUl li:last-child {
+    border-bottom: none;
+}
+
+/* Estilo para a lista de transferências */
+#listaTransferencias {
+    list-style: none;
+    padding: 0;
+}
+
+#listaTransferencias li {
+    background-color: #e8f5e9;
+    margin-bottom: 8px;
+    padding: 10px;
+    border-left: 5px solid var(--primary-color);
+    border-radius: 4px;
+}
+
+/* Utilitário para esconder elementos */
+.hidden {
+    display: none !important;
+}
+
+/* --- Media Query para Responsividade (Telas Maiores - Computadores) --- */
+@media (min-width: 768px) {
+    body {
+        align-items: center;
+    }
+
+    .container {
+        padding: 40px;
+        margin: 50px auto;
+    }
+
+    /* Botões centralizados e maiores em desktop */
+    button {
+        padding: 15px 30px;
+        font-size: 18px;
+    }
+}
