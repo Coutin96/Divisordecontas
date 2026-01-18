@@ -22,7 +22,7 @@
 
             <div id="camposNomes" class="hidden">
                 <hr>
-                <button onclick="confirmarNomes()">Confirmar Nomes e Avançar</button>
+                <!-- Os campos de nome serão inseridos aqui pelo JS -->
             </div>
         </div>
 
@@ -42,6 +42,14 @@
                 </select>
             </div>
 
+            <div class="input-group">
+                <label for="participantesNota">Participantes desta Nota:</label>
+                <select id="participantesNota" multiple required>
+                    <!-- As opções serão preenchidas dinamicamente via JavaScript -->
+                </select>
+                <small>Segure Ctrl (ou Cmd no Mac) para selecionar múltiplos participantes.</small>
+            </div>
+
             <button onclick="adicionarNota()">Adicionar Nota à Lista</button>
 
             <div id="listaNotas" class="notas-resumo">
@@ -58,7 +66,24 @@
             <hr>
             <h2>✨ Resultados Finais</h2>
             <p><strong>Total Geral Gasto:</strong> <span id="totalGasto"></span></p>
-            <p><strong>Valor por Pessoa (Devido):</strong> <span id="valorPorPessoa"></span></p>
+            
+            <!-- NOVA SEÇÃO DE RESUMO INDIVIDUAL -->
+            <div id="resumoIndividual">
+                <h3>📊 Resumo por Participante</h3>
+                <table id="tabelaResumo">
+                    <thead>
+                        <tr>
+                            <th>Participante</th>
+                            <th>Total Pago</th>
+                            <th>Total a Pagar</th>
+                            <th>Saldo Final</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabelaResumo">
+                        <!-- As linhas da tabela serão inseridas aqui pelo JS -->
+                    </tbody>
+                </table>
+            </div>
 
             <div id="resumoTransferencias">
                 <hr>

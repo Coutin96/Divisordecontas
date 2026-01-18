@@ -4,6 +4,8 @@
     /* Verde */
     --secondary-color: #388E3C;
     /* Verde escuro */
+    --danger-color: #d32f2f;
+    /* Vermelho para saldos negativos */
     --text-color: #333;
     --background-color: #f4f4f4;
     --card-background: #ffffff;
@@ -24,8 +26,8 @@ body {
 
 .container {
     width: 90%;
-    max-width: 600px;
-    /* Limita a largura em telas de computador */
+    max-width: 700px;
+    /* Aumentado um pouco para caber a tabela */
     background-color: var(--card-background);
     padding: 20px;
     margin: 20px auto;
@@ -46,6 +48,7 @@ h2 {
 
 h3 {
     color: var(--secondary-color);
+    margin-top: 20px;
 }
 
 hr {
@@ -71,10 +74,21 @@ hr {
     margin-top: 5px;
 }
 
+.input-group select[multiple] {
+    min-height: 100px;
+}
+
 .input-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+}
+
+.input-group small {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+    display: block;
 }
 
 /* Estilo para o Botão */
@@ -100,7 +114,6 @@ button:hover {
     margin-top: 20px;
     padding: 15px;
     border: 1px dashed #4CAF50;
-    /* Borda tracejada verde */
     border-radius: 5px;
     background-color: #f0fff0;
 }
@@ -119,6 +132,41 @@ button:hover {
 
 #listaNotasUl li:last-child {
     border-bottom: none;
+}
+
+/* ESTILOS ADICIONADOS PARA A TABELA DE RESUMO */
+#tabelaResumo {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+#tabelaResumo th,
+#tabelaResumo td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+#tabelaResumo th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#tabelaResumo tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.saldo-negativo {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+.saldo-positivo {
+    color: var(--primary-color);
+    font-weight: bold;
 }
 
 /* Estilo para a lista de transferências */
@@ -151,7 +199,6 @@ button:hover {
         margin: 50px auto;
     }
 
-    /* Botões centralizados e maiores em desktop */
     button {
         padding: 15px 30px;
         font-size: 18px;

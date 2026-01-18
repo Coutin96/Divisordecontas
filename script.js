@@ -3,7 +3,6 @@ let participantes = [];
 let numeroDePessoas = 0;
 let notas = []; // Array para armazenar todas as notas cadastradas
 let totalGasto = 0;
-let valorPorPessoa = 0;
 
 // ==========================================================
 // ETAPA 1: DEFINIR PARTICIPANTES
@@ -15,7 +14,7 @@ let valorPorPessoa = 0;
 function gerarCamposParticipantes() {
     numeroDePessoas = parseInt(document.getElementById('pessoas').value);
     const camposNomesDiv = document.getElementById('camposNomes');
-    camposNomesDiv.innerHTML = '';
+    camposNomesDiv.innerHTML = ''; // Limpa campos anteriores
 
     if (isNaN(numeroDePessoas) || numeroDePessoas <= 0) {
         alert("Por favor, insira um número válido de participantes (mínimo 1).");
@@ -33,7 +32,7 @@ function gerarCamposParticipantes() {
         camposNomesDiv.appendChild(div);
     }
 
-    // Botão de Confirmação 
+    // Botão de Confirmação
     const confirmBtn = document.createElement('button');
     confirmBtn.textContent = 'Confirmar Nomes e Avançar';
     confirmBtn.onclick = confirmarNomes;
@@ -45,12 +44,15 @@ function gerarCamposParticipantes() {
 }
 
 /**
- * Coleta os nomes, popula o combo box do pagador da nota e avança para a Etapa 2.
+ * Coleta os nomes, popula os combo boxes e avança para a Etapa 2.
  */
 function confirmarNomes() {
     participantes = [];
     const selectPagador = document.getElementById('pagadorAtual');
+    const selectParticipantesNota = document.getElementById('participantesNota');
+
     selectPagador.innerHTML = '<option value="">-- Selecione o Pagador --</option>';
+    selectParticipantesNota.innerHTML = '';
 
     let nomesValidos = true;
     for (let i = 1; i <= numeroDePessoas; i++) {
@@ -63,14 +65,20 @@ function confirmarNomes() {
             break;
         }
 
-        // Armazena o nome
         participantes.push({ nome: nome });
 
-        // Adiciona a opção ao combo box (dropdown)
-        const option = document.createElement('option');
-        option.value = nome;
-        option.textContent = nome;
-        selectPagador.appendChild(option);
+        // Adiciona a opção ao combo box do pagador
+        const optionPagador = document.createElement('option');
+        optionPagador.value = nome;
+        optionPagador.textContent = nome;
+        selectPagador.appendChild(optionPagador);
+
+        // Adiciona a opção ao combo box de participantes da nota
+        const optionParticipante = document.createElement('option');
+        optionParticipante.value = nome;
+        optionParticipante.textContent = nome;
+        optionParticipante.selected = true; // Seleciona todos por padrão
+        selectParticipantesNota.appendChild(optionParticipante);
     }
 
     if (!nomesValidos) return;
@@ -97,15 +105,27 @@ function adicionarNota() {
     const valorNota = parseFloat(document.getElementById('valorNotaAtual').value);
     const nomePagador = document.getElementById('pagadorAtual').value;
 
-    if (isNaN(valorNota) || valorNota <= 0 || !nomePagador) {
-        alert("Por favor, insira um valor de nota válido e selecione quem pagou.");
+    // Coleta os participantes selecionados
+    const selectParticipantes = document.getElementById('participantesNota');
+    const participantesSelecionados = Array.from(selectParticipantes.selectedOptions)
+        .map(option => option.value);
+
+    if (isNaN(valorNota) || valorNota <= 0 || !nomePagador || participantesSelecionados.length === 0) {
+        alert("Por favor, insira um valor de nota válido, selecione quem pagou e ao menos um participante.");
         return;
     }
 
-    // 1. Adiciona a nota ao array de notas
+    // Verifica se o pagador está na lista de participantes
+    if (!participantesSelecionados.includes(nomePagador)) {
+        alert("O pagador deve estar incluído na lista de participantes da nota.");
+        return;
+    }
+
+    // 1. Adiciona a nota ao array de notas com os participantes
     notas.push({
         valor: valorNota,
-        pagador: nomePagador
+        pagador: nomePagador,
+        participantes: participantesSelecionados
     });
 
     // 2. Atualiza o total acumulado
@@ -116,12 +136,17 @@ function adicionarNota() {
 
     const listaNotasUl = document.getElementById('listaNotasUl');
     const li = document.createElement('li');
-    li.textContent = `Nota de R$ ${valorNota.toFixed(2)} - Pago por: ${nomePagador}`;
+    li.textContent = `R$ ${valorNota.toFixed(2)} (Pago por: ${nomePagador}) - Part.: ${participantesSelecionados.join(', ')}`;
     listaNotasUl.appendChild(li);
 
     // 4. Limpa os campos para a próxima nota
     document.getElementById('valorNotaAtual').value = '';
     document.getElementById('pagadorAtual').value = '';
+
+    // Reseta a seleção de participantes para todos
+    Array.from(selectParticipantes.options).forEach(option => {
+        option.selected = true;
+    });
 }
 
 // ==========================================================
@@ -129,7 +154,7 @@ function adicionarNota() {
 // ==========================================================
 
 /**
- * Calcula a divisão igualitária do TOTAL GASTO e as transferências necessárias.
+ * Calcula a divisão e as transferências necessárias.
  */
 function calcularTransferenciasFinais() {
     if (notas.length === 0) {
@@ -137,60 +162,89 @@ function calcularTransferenciasFinais() {
         return;
     }
 
-    // 1. Valor Devido por pessoa
-    valorPorPessoa = totalGasto / numeroDePessoas;
-
-    // 2. Cálculo do Total Pago e Saldo para cada pessoa
-
-    // Cria uma cópia com as propriedades de cálculo
+    // 1. Inicializa o objeto de cálculo para cada participante
     const participantesCalculados = participantes.map(p => ({
         nome: p.nome,
         totalPago: 0,
-        saldo: 0
+        valorDevido: 0,
+        saldo: 0 // Saldo = Total Pago - Valor Devido
     }));
 
-    // Soma o total pago por cada pessoa
+    // 2. Calcula o total pago por cada um e o valor devido por cada nota
     notas.forEach(nota => {
-        const pagador = participantesCalculados.find(p => p.nome === nota.pagador);
-        if (pagador) {
-            pagador.totalPago += nota.valor;
+        const valorPorParticipante = nota.valor / nota.participantes.length;
+
+        // Adiciona o valor pago ao pagador
+        const pagadorIndex = participantesCalculados.findIndex(p => p.nome === nota.pagador);
+        if (pagadorIndex !== -1) {
+            participantesCalculados[pagadorIndex].totalPago += nota.valor;
         }
+
+        // Divide o valor da nota entre os participantes
+        nota.participantes.forEach(participanteNome => {
+            const participanteIndex = participantesCalculados.findIndex(p => p.nome === participanteNome);
+            if (participanteIndex !== -1) {
+                participantesCalculados[participanteIndex].valorDevido += valorPorParticipante;
+            }
+        });
     });
 
-    // Calcula o saldo final (o que a pessoa tem a receber ou a pagar)
+    // 3. Calcula o saldo final de cada pessoa
     participantesCalculados.forEach(p => {
-        // Saldo = Total Pago - Valor Devido
-        p.saldo = p.totalPago - valorPorPessoa;
+        p.saldo = p.totalPago - p.valorDevido;
     });
 
-    // 3. Exibe os resultados gerais
+    // 4. Exibe os resultados gerais
     document.getElementById('totalGasto').textContent = `R$ ${totalGasto.toFixed(2)}`;
-    document.getElementById('valorPorPessoa').textContent = `R$ ${valorPorPessoa.toFixed(2)}`;
+    
+    // 5. NOVO: Popula a tabela de resumo individual
+    const corpoTabela = document.getElementById('corpoTabelaResumo');
+    corpoTabela.innerHTML = ''; // Limpa resultados anteriores
 
-    // 4. Algoritmo de Settle-Up (quem paga quem)
+    participantesCalculados.forEach(p => {
+        const tr = document.createElement('tr');
+        
+        let saldoClass = '';
+        let saldoTexto = `R$ ${Math.abs(p.saldo).toFixed(2)}`;
 
-    // Separa e ordena: devedores (saldo negativo) e credores (saldo positivo)
+        if (p.saldo < -0.01) { // Devedor
+            saldoClass = 'saldo-negativo';
+            saldoTexto = `deve ${saldoTexto}`;
+        } else if (p.saldo > 0.01) { // Credor
+            saldoClass = 'saldo-positivo';
+            saldoTexto = `recebe ${saldoTexto}`;
+        } else { // Equilibrado
+            saldoTexto = `R$ 0.00`;
+        }
+
+        tr.innerHTML = `
+            <td>${p.nome}</td>
+            <td>R$ ${p.totalPago.toFixed(2)}</td>
+            <td>R$ ${p.valorDevido.toFixed(2)}</td>
+            <td class="${saldoClass}">${saldoTexto}</td>
+        `;
+        corpoTabela.appendChild(tr);
+    });
+
+    // 6. Algoritmo de Settle-Up (quem paga quem)
     const devedores = participantesCalculados
-        .filter(p => p.saldo < -0.01) // Margem de erro para evitar problemas de ponto flutuante
-        .sort((a, b) => a.saldo - b.saldo); // Maior devedor primeiro
+        .filter(p => p.saldo < -0.01)
+        .sort((a, b) => a.saldo - b.saldo);
 
     const credores = participantesCalculados
-        .filter(p => p.saldo > 0.01) // Margem de erro
-        .sort((a, b) => b.saldo - a.saldo); // Maior credor primeiro
+        .filter(p => p.saldo > 0.01)
+        .sort((a, b) => b.saldo - a.saldo);
 
     let transferencias = [];
-    let i = 0; // Devedores index
-    let j = 0; // Credores index
+    let i = 0;
+    let j = 0;
 
-    // O loop continua enquanto houver devedores e credores
     while (i < devedores.length && j < credores.length) {
         let devedor = devedores[i];
         let credor = credores[j];
 
         const valorADevido = Math.abs(devedor.saldo);
         const valorAReceber = credor.saldo;
-
-        // Valor a ser transferido é o menor dos dois montantes
         const valorTransferido = Math.min(valorADevido, valorAReceber);
 
         if (valorTransferido > 0.01) {
@@ -200,22 +254,15 @@ function calcularTransferenciasFinais() {
                 valor: valorTransferido
             });
 
-            // Ajusta os saldos para a próxima iteração
-            devedor.saldo += valorTransferido; // O saldo do devedor se aproxima de zero
-            credor.saldo -= valorTransferido;  // O saldo do credor se aproxima de zero
+            devedor.saldo += valorTransferido;
+            credor.saldo -= valorTransferido;
         }
 
-        // Avança para o próximo se o saldo foi equilibrado
-        if (Math.abs(devedor.saldo) < 0.01) {
-            i++;
-        }
-
-        if (credor.saldo < 0.01) {
-            j++;
-        }
+        if (Math.abs(devedor.saldo) < 0.01) i++;
+        if (credor.saldo < 0.01) j++;
     }
 
-    // 5. Exibe o resumo das transferências
+    // 7. Exibe o resumo das transferências
     const listaTransferencias = document.getElementById('listaTransferencias');
     listaTransferencias.innerHTML = '';
     document.getElementById('resumoTransferencias').classList.remove('hidden');
@@ -232,6 +279,6 @@ function calcularTransferenciasFinais() {
         });
     }
 
-    // 6. Exibe a seção de resultados
+    // 8. Exibe a seção de resultados
     document.getElementById('resultados').classList.remove('hidden');
 }
