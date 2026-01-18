@@ -4,8 +4,7 @@
     /* Verde */
     --secondary-color: #388E3C;
     /* Verde escuro */
-    --danger-color: #d32f2f;
-    /* Vermelho para saldos negativos */
+    --danger-color: #d32f2f; /* Vermelho para saldos negativos */
     --text-color: #333;
     --background-color: #f4f4f4;
     --card-background: #ffffff;
@@ -27,7 +26,6 @@ body {
 .container {
     width: 90%;
     max-width: 700px;
-    /* Aumentado um pouco para caber a tabela */
     background-color: var(--card-background);
     padding: 20px;
     margin: 20px auto;
@@ -74,22 +72,41 @@ hr {
     margin-top: 5px;
 }
 
-.input-group select[multiple] {
-    min-height: 100px;
-}
-
 .input-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-.input-group small {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 5px;
-    display: block;
+/* ESTILOS ADICIONADOS PARA O GRUPO DE CHECKBOXES */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
 }
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+    transform: scale(1.2); /* Aumenta um pouco o tamanho do checkbox */
+}
+
+.checkbox-item label {
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
 
 /* Estilo para o Botão */
 button {
@@ -134,7 +151,7 @@ button:hover {
     border-bottom: none;
 }
 
-/* ESTILOS ADICIONADOS PARA A TABELA DE RESUMO */
+/* ESTILOS PARA A TABELA DE RESUMO */
 #tabelaResumo {
     width: 100%;
     border-collapse: collapse;
@@ -143,8 +160,7 @@ button:hover {
     font-size: 0.95em;
 }
 
-#tabelaResumo th,
-#tabelaResumo td {
+#tabelaResumo th, #tabelaResumo td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;

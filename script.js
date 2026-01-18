@@ -44,15 +44,15 @@ function gerarCamposParticipantes() {
 }
 
 /**
- * Coleta os nomes, popula os combo boxes e avança para a Etapa 2.
+ * Coleta os nomes, popula os campos e avança para a Etapa 2.
  */
 function confirmarNomes() {
     participantes = [];
     const selectPagador = document.getElementById('pagadorAtual');
-    const selectParticipantesNota = document.getElementById('participantesNota');
+    const participantesContainer = document.getElementById('participantesNotaContainer'); // NOVO
 
     selectPagador.innerHTML = '<option value="">-- Selecione o Pagador --</option>';
-    selectParticipantesNota.innerHTML = '';
+    participantesContainer.innerHTML = ''; // NOVO: Limpa checkboxes antigos
 
     let nomesValidos = true;
     for (let i = 1; i <= numeroDePessoas; i++) {
@@ -73,12 +73,23 @@ function confirmarNomes() {
         optionPagador.textContent = nome;
         selectPagador.appendChild(optionPagador);
 
-        // Adiciona a opção ao combo box de participantes da nota
-        const optionParticipante = document.createElement('option');
-        optionParticipante.value = nome;
-        optionParticipante.textContent = nome;
-        optionParticipante.selected = true; // Seleciona todos por padrão
-        selectParticipantesNota.appendChild(optionParticipante);
+        // NOVO: Cria e adiciona o checkbox para o participante
+        const checkboxItem = document.createElement('div');
+        checkboxItem.className = 'checkbox-item';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `participante-${nome}`;
+        checkbox.value = nome;
+        checkbox.checked = true; // Selecionado por padrão
+
+        const label = document.createElement('label');
+        label.htmlFor = `participante-${nome}`;
+        label.textContent = nome;
+
+        checkboxItem.appendChild(checkbox);
+        checkboxItem.appendChild(label);
+        participantesContainer.appendChild(checkboxItem);
     }
 
     if (!nomesValidos) return;
@@ -105,10 +116,9 @@ function adicionarNota() {
     const valorNota = parseFloat(document.getElementById('valorNotaAtual').value);
     const nomePagador = document.getElementById('pagadorAtual').value;
 
-    // Coleta os participantes selecionados
-    const selectParticipantes = document.getElementById('participantesNota');
-    const participantesSelecionados = Array.from(selectParticipantes.selectedOptions)
-        .map(option => option.value);
+    // NOVO: Coleta os participantes selecionados dos checkboxes
+    const checkboxesSelecionados = document.querySelectorAll('#participantesNotaContainer input[type="checkbox"]:checked');
+    const participantesSelecionados = Array.from(checkboxesSelecionados).map(cb => cb.value);
 
     if (isNaN(valorNota) || valorNota <= 0 || !nomePagador || participantesSelecionados.length === 0) {
         alert("Por favor, insira um valor de nota válido, selecione quem pagou e ao menos um participante.");
@@ -143,10 +153,9 @@ function adicionarNota() {
     document.getElementById('valorNotaAtual').value = '';
     document.getElementById('pagadorAtual').value = '';
 
-    // Reseta a seleção de participantes para todos
-    Array.from(selectParticipantes.options).forEach(option => {
-        option.selected = true;
-    });
+    // NOVO: Reseta a seleção de participantes para todos
+    const todosCheckboxes = document.querySelectorAll('#participantesNotaContainer input[type="checkbox"]');
+    todosCheckboxes.forEach(cb => cb.checked = true);
 }
 
 // ==========================================================
@@ -196,14 +205,14 @@ function calcularTransferenciasFinais() {
 
     // 4. Exibe os resultados gerais
     document.getElementById('totalGasto').textContent = `R$ ${totalGasto.toFixed(2)}`;
-    
-    // 5. NOVO: Popula a tabela de resumo individual
+
+    // 5. Popula a tabela de resumo individual
     const corpoTabela = document.getElementById('corpoTabelaResumo');
     corpoTabela.innerHTML = ''; // Limpa resultados anteriores
 
     participantesCalculados.forEach(p => {
         const tr = document.createElement('tr');
-        
+
         let saldoClass = '';
         let saldoTexto = `R$ ${Math.abs(p.saldo).toFixed(2)}`;
 

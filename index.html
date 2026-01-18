@@ -42,12 +42,12 @@
                 </select>
             </div>
 
+            <!-- CAMPO SUBSTITUÍDO POR CHECKBOXES -->
             <div class="input-group">
-                <label for="participantesNota">Participantes desta Nota:</label>
-                <select id="participantesNota" multiple required>
-                    <!-- As opções serão preenchidas dinamicamente via JavaScript -->
-                </select>
-                <small>Segure Ctrl (ou Cmd no Mac) para selecionar múltiplos participantes.</small>
+                <label>Participantes desta Nota:</label>
+                <div id="participantesNotaContainer" class="checkbox-group">
+                    <!-- Os checkboxes serão inseridos aqui pelo JS -->
+                </div>
             </div>
 
             <button onclick="adicionarNota()">Adicionar Nota à Lista</button>
@@ -66,8 +66,7 @@
             <hr>
             <h2>✨ Resultados Finais</h2>
             <p><strong>Total Geral Gasto:</strong> <span id="totalGasto"></span></p>
-            
-            <!-- NOVA SEÇÃO DE RESUMO INDIVIDUAL -->
+
             <div id="resumoIndividual">
                 <h3>📊 Resumo por Participante</h3>
                 <table id="tabelaResumo">
